@@ -6,6 +6,7 @@ from os import getenv
 from models.base_model import BaseModel
 from models.base_model import Base
 from models.amenity import Amenity
+from models.state import State
 from models.review import Review
 from sqlalchemy import Column
 from sqlalchemy import Float
