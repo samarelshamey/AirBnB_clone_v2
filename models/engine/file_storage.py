@@ -55,7 +55,9 @@ class FileStorage:
     def delete(self, obj=None):
         """Delete a given object from __objects, if it exists."""
         try:
-            del self.__objects["{}.{}".format(type(obj).__name__, obj.id)]
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            if key in self.__objects:
+                del self.__objects[key]
         except (AttributeError, KeyError):
             pass
 
