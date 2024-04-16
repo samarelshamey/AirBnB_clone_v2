@@ -71,7 +71,6 @@ class TestHBNBCommand(unittest.TestCase):
         self.assertIsNotNone(HBNBCommand.do_destroy.__doc__)
         self.assertIsNotNone(HBNBCommand.do_all.__doc__)
         self.assertIsNotNone(HBNBCommand.do_update.__doc__)
-        self.assertIsNotNone(HBNBCommand.count.__doc__)
         self.assertIsNotNone(HBNBCommand.strip_clean.__doc__)
         self.assertIsNotNone(HBNBCommand.default.__doc__)
 
@@ -89,8 +88,8 @@ class TestHBNBCommand(unittest.TestCase):
 
     def test_EOF(self):
         """Test that EOF quits."""
-        with patch("sys.stdout", new=StringIO()) as f:
-            self.assertTrue(self.HBNB.onecmd("EOF"))
+        with self.assertRaises(SystemExit):
+            self.HBNB.onecmd("EOF")
 
     def test_create_errors(self):
         """Test create command errors."""
