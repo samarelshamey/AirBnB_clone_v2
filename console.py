@@ -121,37 +121,34 @@ class HBNBCommand(cmd.Cmd):
                 raise SyntaxError("Missing command arguments")
 
             my_list = args.split(" ")
-            class_name = my_list[0]
 
-            if class_name == 'create':
-                if len(my_list) < 2:
-                    raise SyntaxError("Incomplete command")
-
-                class_attr = {}
-                for item in my_list[1:]:
-                    key, value = item.split("=")
+            kwargs = {}
+            for i in range(1, len(my_list)):
+                key, value = tuple(my_list[i].split("="))
+                if value[0] == '"':
                     value = value.strip('"').replace("_", " ")
-                    class_attr[key] = value
-
-                if class_attr and class_name == 'State':
-                    state_instance = State(**class_attr)
-                    state_instance.id = str(uuid.uuid4())
-                    state_instance.created_at = datetime.datetime.now()
-                    state_instance.updated_at = datetime.datetime.now()
-                    state_instance.save()
-                    print(state_instance.id)
-                elif class_attr and class_name == 'Place':
-                    place_instance = Place(**class_attr)
-                    place_instance.id = str(uuid.uuid4())
-                    place_instance.created_at = datetime.datetime.now()
-                    place_instance.updated_at = datetime.datetime.now()
-                    place_instance.save()
-                    print(place_instance.id)
                 else:
-                    print("Invalid class or attributes")
-            else:
-                print("Invalid command")
+                    try:
+                        value = eval(value)
+                    except (SyntaxError, NameError):
+                        continue
+                kwargs[key] = value
 
+            if not my_list[0]:
+                raise SyntaxError("Class name missing")
+
+            class_name = my_list[0]
+            obj_class = globals().get(class_name)
+            if obj_class:
+                if kwargs:
+                    obj = obj_class(**kwargs)
+                else:
+                    obj = obj_class()
+                storage.new(obj)
+                print(obj.id)
+                obj.save()
+            else:
+                print("** Class doesn't exist: {} **".format(class_name))
         except SyntaxError as se:
             print(str(se))
 
