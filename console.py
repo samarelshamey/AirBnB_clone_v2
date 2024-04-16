@@ -115,39 +115,43 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """Usage: create <class> <key 1>=<value 2> <key 2>=<value 2>
-        Create a new class instance with given keys/values and print its id.
-	"""
+        Create a new class instance with given keys/values and print its id"""
         try:
             if not args:
-                raise SyntaxError()
+                raise SyntaxError("Missing command arguments")
+
             my_list = args.split(" ")
-
-            kwargs = {}
-            for i in range(1, len(my_list)):
-                key, value = tuple(my_list[i].split("="))
-                if value[0] == '"':
-                    value = value.strip('"').replace("_", " ")
-                else:
-                    try:
-                        value = eval(value)
-                    except (SyntaxError, NameError):
-                        continue
-                kwargs[key] = value
-
-            if not my_list[0]:
-                raise SyntaxError("Class name missing")
             class_name = my_list[0]
-            obj_class = globals().get(class_name)
-            if obj_class:
-                if kwargs:
-                    obj = obj_class(**kwargs)
+
+            if class_name == 'create':
+                if len(my_list) < 2:
+                    raise SyntaxError("Incomplete command")
+
+                class_attr = {}
+                for item in my_list[1:]:
+                    key, value = item.split("=")
+                    value = value.strip('"').replace("_", " ")
+                    class_attr[key] = value
+
+                if class_attr and class_name == 'State':
+                    state_instance = State(**class_attr)
+                    state_instance.id = str(uuid.uuid4())
+                    state_instance.created_at = datetime.datetime.now()
+                    state_instance.updated_at = datetime.datetime.now()
+                    state_instance.save()
+                    print(state_instance.id)
+                elif class_attr and class_name == 'Place':
+                    place_instance = Place(**class_attr)
+                    place_instance.id = str(uuid.uuid4())
+                    place_instance.created_at = datetime.datetime.now()
+                    place_instance.updated_at = datetime.datetime.now()
+                    place_instance.save()
+                    print(place_instance.id)
                 else:
-                    obj = obj_class()
-                    storage.new(obj)
-                    print(obj.id)
-                    obj.save()
+                    print("Invalid class or attributes")
             else:
-                print("** Class doesn't exist: {} **".format(class_name))
+                print("Invalid command")
+
         except SyntaxError as se:
             print(str(se))
 
@@ -303,7 +307,6 @@ class HBNBCommand(cmd.Cmd):
                 args = args[second_quote + 1:]
 
             args = args.partition(' ')
-
             # if att_name was not quoted arg
             if not att_name and args[0] != ' ':
                 att_name = args[0]
@@ -344,6 +347,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
