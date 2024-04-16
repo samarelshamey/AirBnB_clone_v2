@@ -118,9 +118,9 @@ class HBNBCommand(cmd.Cmd):
         Create a new class instance with given keys/values and print its id.
 	"""
         try:
-            if not line:
+            if not args:
                 raise SyntaxError()
-            my_list = line.split(" ")
+            my_list = args.split(" ")
 
             kwargs = {}
             for i in range(1, len(my_list)):
@@ -134,18 +134,22 @@ class HBNBCommand(cmd.Cmd):
                         continue
                 kwargs[key] = value
 
-            if kwargs == {}:
-                obj = eval(my_list[0])()
+            if not my_list[0]:
+                raise SyntaxError("Class name missing")
+            class_name = my_list[0]
+            obj_class = globals().get(class_name)
+            if obj_class:
+                if kwargs:
+                    obj = obj_class(**kwargs)
+                else:
+                    obj = obj_class()
+                    storage.new(obj)
+                    print(obj.id)
+                    obj.save()
             else:
-                obj = eval(my_list[0])(**kwargs)
-                storage.new(obj)
-            print(obj.id)
-            obj.save()
-
-        except SyntaxError:
-            print("** class name missing **")
-        except NameError:
-            print("** class doesn't exist **")
+                print("** Class doesn't exist: {} **".format(class_name))
+        except SyntaxError as se:
+            print(str(se))
 
     def help_create(self):
         """ Help information for the create method """
