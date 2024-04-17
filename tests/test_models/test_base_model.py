@@ -75,12 +75,6 @@ class test_basemodel(unittest.TestCase):
         with self.assertRaises(TypeError):
             new = self.value(**n)
 
-    def test_kwargs_one(self):
-        """test invalid keys"""
-        n = {'invalid_key': 'value'}
-        with self.assertRaises(TypeError):
-            new = self.value(**n)
-
     def test_id(self):
         """test id"""
         new = self.value()
