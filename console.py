@@ -41,50 +41,26 @@ class HBNBCommand(cmd.Cmd):
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
-        _cmd = _cls = _id = _args = ''  # initialize line elements
-
-        # scan for general formating - i.e '.', '(', ')'
-        if not ('.' in line and '(' in line and ')' in line):
+        if not all(symbol in line for symbol in ['.(', ')']):
             return line
-
-        try:  # parse line left to right
-            pline = line[:]  # parsed line
-
-            # isolate <class name>
-            _cls = pline[:pline.find('.')]
-
-            # isolate and validate <command>
-            _cmd = pline[pline.find('.') + 1:pline.find('(')]
-            if _cmd not in HBNBCommand.dot_cmds:
-                raise Exception
-
-            # if parantheses contain arguments, parse them
-            pline = pline[pline.find('(') + 1:pline.find(')')]
-            if pline:
-                # partition args: (<id>, [<delim>], [<*args>])
-                pline = pline.partition(', ')  # pline convert to tuple
-
-                # isolate _id, stripping quotes
-                _id = pline[0].replace('\"', '')
-                # possible bug here:
-                # empty quotes register as empty _id when replaced
-
-                # if arguments exist beyond _id
-                pline = pline[2].strip()  # pline is now str
-                if pline:
-                    # check for *args or **kwargs
-                    if pline[0] == '{' and pline[-1] == '}'\
-                            and type(eval(pline)) == dict:
-                        _args = pline
-                    else:
-                        _args = pline.replace(',', '')
-                        # _args = _args.replace('\"', '')
-            line = ' '.join([_cmd, _cls, _id, _args])
-
-        except Exception as mess:
-            pass
-        finally:
-            return line
+        try:
+            class_name, _, rest = line.partition('.')
+            command, _, args = rest.partition('(')
+            if command not in HBNBCommand.dot_cmds:
+                raise Exception("Invalid command")
+            args = args.rstrip(')').strip()
+            obj_id, _, args = args.partition(', ')
+            obj_id = obj_id.strip('\"')
+            if args and (args[0] == '{' and args[-1] == '}'):
+                args_dict = eval(args)
+                args_str = args
+            else:
+                args_dict = None
+                args_str = args.replace(',', '')
+                modified_line = ' '.join([command, class_name, obj_id, args_str])
+                return modified_line
+        except Exception as e:
+                return line
 
     def postcmd(self, stop, line):
         """Prints if isatty is false"""
