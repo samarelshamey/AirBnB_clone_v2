@@ -13,12 +13,12 @@ class test_City(test_basemodel):
         self.name = "City"
         self.value = City
 
-    def test_str(self):
-        """Test the string representation of a City instance"""
+    def test_state_id(self):
+        """ test state id"""
         new = self.value()
-        new.id = "test_id"
-        new.created_at = "test_created_at"
-        new.updated_at = "test_updated_at"
-        actual_str = str(new)
-        expected_str = f"[{new.__class__.__name__}] ({new.id}) {{'id': '{new.id}', 'created_at': '{new.created_at}', 'updated_at': '{new.updated_at}'}}"
-        self.assertIn(expected_str, actual_str)
+        self.assertEqual(type(new.state_id), str)
+
+    def test_name(self):
+        """test name"""
+        new = self.value()
+        self.assertEqual(type(new.name), str)

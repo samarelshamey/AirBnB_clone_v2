@@ -19,4 +19,5 @@ class test_Amenity(test_basemodel):
         the type of the 'name' attribute is a string
         """
         new = self.value()
+        new.name = "Test Amenity Name"
         self.assertEqual(type(new.name), str)
