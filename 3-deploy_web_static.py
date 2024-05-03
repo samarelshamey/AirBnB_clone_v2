@@ -9,15 +9,16 @@ env.hosts = ['52.205.90.195', '54.197.207.11']
 
 
 def do_pack():
-    """generates a tgz archive"""
-    try:
-        date = datetime.now().strftime("%Y%m%d%H%M%S")
-        if isdir("versions") is False:
-            local("mkdir versions")
-        file_name = "versions/web_static_{}.tgz".format(date)
-        local("tar -cvzf {} web_static".format(file_name))
-        return file_name
-    except Exception as e:
+    """generate tgz file"""
+    now = datetime.now()
+    archive = 'web_static_' + now.strftime("%Y%m%d%H%M%S") + '.' + 'tgz'
+
+    local('mkdir -p versions')
+    result = local('tar -cvzf versions/{} web_static'.format(archive))
+
+    if result is not None:
+        return archive
+    else:
         return None
 
 
