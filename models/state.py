@@ -20,7 +20,8 @@ class State(BaseModel, Base):
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
     cities = relationship("City",  backref="state", cascade="delete")
-    if getenv("HBNB_TYPE_STORAGE") != "db":
+    if getenv("HBNB_TYPE_STORAGE") != "db"
+    and not hasattr(BaseModel, 'cities'):
         @property
         def cities(self):
             """Get a list of all related City objects."""
