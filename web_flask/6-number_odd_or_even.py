@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """script that starts a Flask web application"""
-from flask import Flask
+from flask import Flask, render_template
 app = Flask(__name__)
 
 
@@ -42,13 +42,10 @@ def number_template(n):
 
 
 @app.route("/number_odd_or_even/<int:n>", strict_slashes=False)
-def even_or_odd(n):
+def number_odd_or_even(n):
     """display n s oddd or even"""
-    if n % 2 == 0:
-        evenn = "even"
-    else:
-        evenn = "odd"
-    return render_template('6-number_odd_or_even.html', n=n, evenn=evenn)
+    odd_even = 'even' if n % 2 == 0 else 'odd'
+    return render_template('6-number_odd_or_even.html', n=n, odd_even=odd_even)
 
 
 if __name__ == '__main__':
