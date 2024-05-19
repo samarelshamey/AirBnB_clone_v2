@@ -16,7 +16,7 @@ def states_list():
 
 
 @app.teardown_appcontext
-def teardown_session(exception):
+def teardown_session(exception=None):
     """teardown session"""
     storage.close()
 
